@@ -14,7 +14,7 @@ public class UserLoginSuccessApiResponseModel {
     public UserLoginSuccessApiResponseModel() {
     }
 
-    public boolean getSuccess() {
+    public boolean IsSuccess() {
         return success;
     }
 
