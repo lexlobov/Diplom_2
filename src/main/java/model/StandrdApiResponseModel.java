@@ -1,3 +1,5 @@
+package model;
+
 public class StandrdApiResponseModel {
     private boolean success;
     private String message;

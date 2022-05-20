@@ -1,8 +1,10 @@
+package model;
+
 public class UserLoginSuccessApiResponseModel {
     private boolean success;
     private String accessToken;
     private String refreshToken;
-    private  UserModel user;
+    private UserModel user;
 
     public UserLoginSuccessApiResponseModel(boolean success, String accessToken, String refreshToken, UserModel user) {
         this.success = success;

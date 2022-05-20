@@ -1,3 +1,5 @@
+package model;
+
 public class UserModel {
     private String email;
     private String password;

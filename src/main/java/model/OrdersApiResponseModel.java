@@ -1,3 +1,7 @@
+package model;
+
+import model.OrderModel;
+
 import java.util.List;
 
 public class OrdersApiResponseModel {
