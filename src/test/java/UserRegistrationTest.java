@@ -1,4 +1,5 @@
 import com.github.javafaker.Faker;
+import io.qameta.allure.junit4.DisplayName;
 import model.UserModel;
 import org.junit.Test;
 
@@ -14,7 +15,15 @@ public class UserRegistrationTest {
     UserModel user = new UserModel(email, password, name);
 
     @Test
+    @DisplayName("Создание пользователя, поизитвный сценарий")
     public void registerNewUserPositiveTest(){
         steps.createNewUser(user);
+    }
+
+    @Test
+    @DisplayName("Создание пользователя с уже существующей почтой")
+    public void registerNewUserEmailAlreadyExistNegativeTest(){
+        steps.createNewUser(user);
+        steps.createNewUserAlreadyExistNegative(user);
     }
 }
