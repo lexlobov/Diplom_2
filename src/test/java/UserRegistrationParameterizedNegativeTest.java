@@ -1,4 +1,5 @@
 import com.github.javafaker.Faker;
+import io.qameta.allure.junit4.DisplayName;
 import model.UserModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +35,7 @@ public class UserRegistrationParameterizedNegativeTest {
     }
 
     @Test
+    @DisplayName("Создание пользователя, негативный параметризованный тест с незаполненными полям")
     public void createNewUserNotEnoughData(){
         UserModel user = new UserModel(email, name, password);
         steps.createNewUserNotEnoughDataNegative(user);
