@@ -25,7 +25,7 @@ public class UserSteps {
         ValidatableResponse response = createUserClient.createUser(user);
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
-        assertThat("Status code should be 201", statusCode, equalTo(HttpStatus.SC_CREATED));
+        assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_OK));
         assertThat("Success should be true", isSuccess, equalTo(true));
     }
 
