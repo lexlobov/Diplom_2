@@ -10,7 +10,7 @@ public class LoginUserClient extends BaseHttpConfig {
 
     private final String loginUri = "/api/auth/login";
 
-    public ValidatableResponse LoginUser(UserModel user){
+    public ValidatableResponse loginUser(UserModel user){
         return given().spec(baseSpec())
                 .body(user)
                 .when()
