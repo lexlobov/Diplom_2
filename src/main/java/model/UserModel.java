@@ -4,6 +4,7 @@ public class UserModel {
     private String email;
     private String password;
     private String name;
+    private String authorization;
 
     public UserModel(String email, String password, String name) {
         this.email = email;
@@ -36,5 +37,13 @@ public class UserModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAuthorization() {
+        return authorization;
+    }
+
+    public void setAuthorization(String authorization) {
+        this.authorization = authorization;
     }
 }

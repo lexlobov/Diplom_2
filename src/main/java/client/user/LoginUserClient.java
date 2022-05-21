@@ -1,11 +1,12 @@
-package client;
+package client.user;
 
+import client.BaseHttpConfig;
 import io.restassured.response.ValidatableResponse;
 import model.UserModel;
 
 import static io.restassured.RestAssured.given;
 
-public class LoginUserClient extends BaseHttpConfig{
+public class LoginUserClient extends BaseHttpConfig {
 
     private final String loginUri = "/api/auth/login";
 

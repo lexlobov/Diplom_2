@@ -1,7 +1,7 @@
-import client.CreateUserClient;
-import client.DeleteUserClient;
-import client.LoginUserClient;
-import client.UpdateUserClient;
+import client.user.CreateUserClient;
+import client.user.DeleteUserClient;
+import client.user.LoginUserClient;
+import client.user.UpdateUserClient;
 
 public class UserSteps {
 

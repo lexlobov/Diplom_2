@@ -1,5 +1,6 @@
-package client;
+package client.user;
 
+import client.BaseHttpConfig;
 import io.restassured.response.ValidatableResponse;
 import model.UserModel;
 
