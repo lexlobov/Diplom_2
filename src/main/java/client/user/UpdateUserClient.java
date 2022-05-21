@@ -11,7 +11,6 @@ public class UpdateUserClient extends BaseHttpConfig {
     private final String updateUserUri = "/api/auth/user";
 
     public ValidatableResponse updateUser(UserModel user){
-
         return given().spec(baseSpec())
                 .body(user)
                 .when()

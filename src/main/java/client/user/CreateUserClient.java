@@ -9,6 +9,7 @@ import static io.restassured.RestAssured.given;
 public class CreateUserClient extends BaseHttpConfig {
 
     private final String createUserUri = "/api/auth/register";
+
     public ValidatableResponse createUser(UserModel user){
         return given().spec(baseSpec())
                 .body(user)
