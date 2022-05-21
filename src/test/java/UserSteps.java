@@ -2,7 +2,6 @@ import client.user.CreateUserClient;
 import client.user.DeleteUserClient;
 import client.user.LoginUserClient;
 import client.user.UpdateUserClient;
-import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 import model.UserModel;
 import org.apache.http.HttpStatus;
@@ -26,7 +25,7 @@ public class UserSteps {
         assertThat("Success should be true", isSuccess, equalTo(true));
     }
 
-    public void login(UserModel user){
+    public void loginUserPositive(UserModel user){
         ValidatableResponse response = loginUserClient.loginUser(user);
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
@@ -36,6 +35,26 @@ public class UserSteps {
         assertThat("Success should be true", isSuccess, equalTo(true));
         assertThat("Access token should be not null", accessToken, equalTo(not(null)));
         assertThat("Refresh token should be not null", refreshToken, equalTo(not(null)));
+    }
+
+    public void createNewUserAlreadyExistNegative(UserModel user){
+        ValidatableResponse response = createUserClient.createUser(user);
+        int statusCode = response.extract().statusCode();
+        boolean isSuccess = response.extract().path("success");
+        String message = response.extract().path("message");
+        assertThat("Status code should be 403", statusCode, equalTo(HttpStatus.SC_FORBIDDEN));
+        assertThat("Success should be false", isSuccess, equalTo(false));
+        assertThat("Message should be 'User already exists'", message, equalTo("User already exists"));
+    }
+
+    public void loginUserNegative(UserModel user){
+        ValidatableResponse response = loginUserClient.loginUser(user);
+        int statusCode = response.extract().statusCode();
+        boolean isSuccess = response.extract().path("success");
+        String message = response.extract().path("message");
+        assertThat("Status code should be 401", statusCode, equalTo(HttpStatus.SC_UNAUTHORIZED));
+        assertThat("Success should be false", isSuccess, equalTo(false));
+        assertThat("Message should be 'email or password are incorrect'", message, equalTo("email or password are incorrect"));
     }
 
 }
