@@ -2,6 +2,7 @@ import client.user.CreateUserClient;
 import client.user.DeleteUserClient;
 import client.user.LoginUserClient;
 import client.user.UpdateUserClient;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import model.UserModel;
 import org.apache.http.HttpStatus;
@@ -17,6 +18,7 @@ public class UserSteps {
     UpdateUserClient updateUserClient = new UpdateUserClient();
     DeleteUserClient deleteUserClient = new DeleteUserClient();
 
+    @DisplayName("")
     public void createNewUser(UserModel user){
         ValidatableResponse response = createUserClient.createUser(user);
         int statusCode = response.extract().statusCode();
@@ -81,6 +83,26 @@ public class UserSteps {
         assertThat("Success should be true", isSuccess, equalTo(true));
         assertThat("Name should be updated to new one", newNameActual, equalTo(newName));
         assertThat("Email should be updated to new one", newEmailActual, equalTo(newEmail));
+    }
+
+    public void updateUserEmailAlreadyExistNegative(UserModel user){
+        ValidatableResponse response = updateUserClient.updateUser(user);
+        int statusCode = response.extract().statusCode();
+        boolean isSuccess = response.extract().path("success");
+        String message = response.extract().path("message");
+        assertThat("Status code should be 403", statusCode, equalTo(HttpStatus.SC_FORBIDDEN));
+        assertThat("Success should be false", isSuccess, equalTo(false));
+        assertThat("Message should be 'User with such email already exists'", message, equalTo("User with such email already exists"));
+    }
+
+    public void updateUserUnauthorizedNegative(UserModel user){
+        ValidatableResponse response = updateUserClient.updateUser(user);
+        int statusCode = response.extract().statusCode();
+        boolean isSuccess = response.extract().path("success");
+        String message = response.extract().path("message");
+        assertThat("Status code should be 401", statusCode, equalTo(HttpStatus.SC_UNAUTHORIZED));
+        assertThat("Success should be false", isSuccess, equalTo(false));
+        assertThat("Message should be 'You should be authorised'", message, equalTo("You should be authorised"));
     }
 
 }
