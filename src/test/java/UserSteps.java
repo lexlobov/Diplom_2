@@ -30,7 +30,7 @@ public class UserSteps {
     }
 
     @Step("Авторизация пользователя")
-    @Description("Проверяются код ответа, флаг success и ниличеие токенов")
+    @Description("Проверяются код ответа, флаг success и наличие токенов")
     public void loginUserPositive(UserModel user){
         ValidatableResponse response = loginUserClient.loginUser(user);
         int statusCode = response.extract().statusCode();
