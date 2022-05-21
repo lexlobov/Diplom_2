@@ -47,6 +47,16 @@ public class UserSteps {
         assertThat("Message should be 'User already exists'", message, equalTo("User already exists"));
     }
 
+    public void createNewUserNotEnoughDataNegative(UserModel user){
+        ValidatableResponse response = createUserClient.createUser(user);
+        int statusCode = response.extract().statusCode();
+        boolean isSuccess = response.extract().path("success");
+        String message = response.extract().path("message");
+        assertThat("Status code should be 403", statusCode, equalTo(HttpStatus.SC_FORBIDDEN));
+        assertThat("Success should be false", isSuccess, equalTo(false));
+        assertThat("Message should be 'Email, password and name are required fields'", message, equalTo("Email, password and name are required fields"));
+    }
+
     public void loginUserNegative(UserModel user){
         ValidatableResponse response = loginUserClient.loginUser(user);
         int statusCode = response.extract().statusCode();
@@ -55,6 +65,22 @@ public class UserSteps {
         assertThat("Status code should be 401", statusCode, equalTo(HttpStatus.SC_UNAUTHORIZED));
         assertThat("Success should be false", isSuccess, equalTo(false));
         assertThat("Message should be 'email or password are incorrect'", message, equalTo("email or password are incorrect"));
+    }
+
+    public void deleteUser(UserModel user){
+        ValidatableResponse response = deleteUserClient.deleteUser(user);
+    }
+
+    public void updateUserPositive(UserModel user, String newName, String newEmail){
+        ValidatableResponse response = updateUserClient.updateUser(user);
+        int statusCode = response.extract().statusCode();
+        boolean isSuccess = response.extract().path("success");
+        String newNameActual = response.extract().path("user.name");
+        String newEmailActual = response.extract().path("user.email");
+        assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_OK));
+        assertThat("Success should be true", isSuccess, equalTo(true));
+        assertThat("Name should be updated to new one", newNameActual, equalTo(newName));
+        assertThat("Email should be updated to new one", newEmailActual, equalTo(newEmail));
     }
 
 }
