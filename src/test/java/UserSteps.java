@@ -2,6 +2,7 @@ import client.user.CreateUserClient;
 import client.user.DeleteUserClient;
 import client.user.LoginUserClient;
 import client.user.UpdateUserClient;
+import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
 import model.UserModel;
@@ -18,7 +19,8 @@ public class UserSteps {
     UpdateUserClient updateUserClient = new UpdateUserClient();
     DeleteUserClient deleteUserClient = new DeleteUserClient();
 
-    @DisplayName("")
+    @DisplayName("Создание пользователя")
+    @Description("Проверяются код ответа и флаг success")
     public void createNewUser(UserModel user){
         ValidatableResponse response = createUserClient.createUser(user);
         int statusCode = response.extract().statusCode();
@@ -27,6 +29,8 @@ public class UserSteps {
         assertThat("Success should be true", isSuccess, equalTo(true));
     }
 
+    @DisplayName("Авторизация пользователя")
+    @Description("Проверяются код ответа, флаг success и ниличеие токенов")
     public void loginUserPositive(UserModel user){
         ValidatableResponse response = loginUserClient.loginUser(user);
         int statusCode = response.extract().statusCode();
@@ -39,6 +43,8 @@ public class UserSteps {
         assertThat("Refresh token should be not null", refreshToken, equalTo(not(null)));
     }
 
+    @DisplayName("Негативный сценарий создания пользователя при вводе почты, которая уже зарегистрирована")
+    @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
     public void createNewUserAlreadyExistNegative(UserModel user){
         ValidatableResponse response = createUserClient.createUser(user);
         int statusCode = response.extract().statusCode();
@@ -49,6 +55,8 @@ public class UserSteps {
         assertThat("Message should be 'User already exists'", message, equalTo("User already exists"));
     }
 
+    @DisplayName("Негативный сценарий создания пользователя при пропуске обязательных полей")
+    @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
     public void createNewUserNotEnoughDataNegative(UserModel user){
         ValidatableResponse response = createUserClient.createUser(user);
         int statusCode = response.extract().statusCode();
@@ -59,6 +67,8 @@ public class UserSteps {
         assertThat("Message should be 'Email, password and name are required fields'", message, equalTo("Email, password and name are required fields"));
     }
 
+    @DisplayName("Негативный сценарий авторизации пользователя")
+    @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
     public void loginUserNegative(UserModel user){
         ValidatableResponse response = loginUserClient.loginUser(user);
         int statusCode = response.extract().statusCode();
@@ -69,10 +79,13 @@ public class UserSteps {
         assertThat("Message should be 'email or password are incorrect'", message, equalTo("email or password are incorrect"));
     }
 
+    @DisplayName("Удаление пользователя")
     public void deleteUser(UserModel user){
         ValidatableResponse response = deleteUserClient.deleteUser(user);
     }
 
+    @DisplayName("Обновление данных пользователя")
+    @Description("Проверяются код ответа, флаг success и обновленное имя и почта в ответе")
     public void updateUserPositive(UserModel user, String newName, String newEmail){
         ValidatableResponse response = updateUserClient.updateUser(user);
         int statusCode = response.extract().statusCode();
@@ -85,6 +98,8 @@ public class UserSteps {
         assertThat("Email should be updated to new one", newEmailActual, equalTo(newEmail));
     }
 
+    @DisplayName("Негатинвный сценраий обновления пользователя с попыткой присовения почты, которая уже зарегистрирована")
+    @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
     public void updateUserEmailAlreadyExistNegative(UserModel user){
         ValidatableResponse response = updateUserClient.updateUser(user);
         int statusCode = response.extract().statusCode();
@@ -95,6 +110,8 @@ public class UserSteps {
         assertThat("Message should be 'User with such email already exists'", message, equalTo("User with such email already exists"));
     }
 
+    @DisplayName("Негативный сценарий обновления пользователя, когда нет авторизации")
+    @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
     public void updateUserUnauthorizedNegative(UserModel user){
         ValidatableResponse response = updateUserClient.updateUser(user);
         int statusCode = response.extract().statusCode();
