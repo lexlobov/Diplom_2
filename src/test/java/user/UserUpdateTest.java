@@ -1,11 +1,13 @@
 package user;
 
 import com.github.javafaker.Faker;
+import io.qameta.allure.junit4.DisplayName;
 import model.UserModel;
 import org.junit.Test;
 
 import java.util.Locale;
 
+@DisplayName("Различные сценарии обновления пользователя")
 public class UserUpdateTest {
 
     UserSteps steps = new UserSteps();
@@ -23,6 +25,7 @@ public class UserUpdateTest {
     UserModel newUser = new UserModel(newEmail, null, newName);
 
     @Test
+    @DisplayName("Обновление пользователя, положительный сценарий")
     public void updateUserInfoTest(){
         steps.createNewUser(user);
         steps.loginUserPositive(email, password);
@@ -30,6 +33,7 @@ public class UserUpdateTest {
     }
 
     @Test
+    @DisplayName("Обнволение пользователя, негативный сценарий без авторизационного токена")
     public void updateUserInfoWithoutAuthorizationNegativeTest(){
         steps.createNewUser(user);
         steps.loginUserPositive(email, password);
