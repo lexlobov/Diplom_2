@@ -4,7 +4,6 @@ import client.user.CreateUserClient;
 import client.user.DeleteUserClient;
 import client.user.LoginUserClient;
 import client.user.UpdateUserClient;
-import groovy.json.JsonToken;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
@@ -20,6 +19,8 @@ public class UserSteps {
     LoginUserClient loginUserClient = new LoginUserClient();
     UpdateUserClient updateUserClient = new UpdateUserClient();
     DeleteUserClient deleteUserClient = new DeleteUserClient();
+
+    private String authToken;
 
     @Step("Создание пользователя")
     @Description("Проверяются код ответа и флаг success")
@@ -44,6 +45,7 @@ public class UserSteps {
         assertThat("Success should be true", isSuccess, equalTo(true));
         assertThat("Access token should be not null", accessToken, notNullValue());
         assertThat("Refresh token should be not null", refreshToken, notNullValue());
+        setAuthToken(accessToken);
     }
 
     @Step("Негативный сценарий создания пользователя при вводе почты, которая уже зарегистрирована")
@@ -91,7 +93,7 @@ public class UserSteps {
     @Step("Обновление данных пользователя")
     @Description("Проверяются код ответа, флаг success и обновленное имя и почта в ответе")
     public void updateUserPositive(UserModel user, String newName, String newEmail){
-        ValidatableResponse response = updateUserClient.updateUser(user);
+        ValidatableResponse response = updateUserClient.updateUser(user, authToken);
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         String newNameActual = response.extract().path("user.name");
@@ -105,7 +107,7 @@ public class UserSteps {
     @Step("Негатинвный сценраий обновления пользователя с попыткой присовения почты, которая уже зарегистрирована")
     @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
     public void updateUserEmailAlreadyExistNegative(UserModel user){
-        ValidatableResponse response = updateUserClient.updateUser(user);
+        ValidatableResponse response = updateUserClient.updateUser(user, authToken);
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         String message = response.extract().path("message");
@@ -117,7 +119,7 @@ public class UserSteps {
     @Step("Негативный сценарий обновления пользователя, когда нет авторизации")
     @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
     public void updateUserUnauthorizedNegative(UserModel user){
-        ValidatableResponse response = updateUserClient.updateUser(user);
+        ValidatableResponse response = updateUserClient.updateUser(user, "");
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         String message = response.extract().path("message");
@@ -126,4 +128,11 @@ public class UserSteps {
         assertThat("Message should be 'You should be authorised'", message, equalTo("You should be authorised"));
     }
 
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
 }
