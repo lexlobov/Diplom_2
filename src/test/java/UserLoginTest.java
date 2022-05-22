@@ -1,4 +1,5 @@
 import com.github.javafaker.Faker;
+import io.qameta.allure.junit4.DisplayName;
 import model.UserModel;
 import org.junit.Test;
 
@@ -13,8 +14,23 @@ public class UserLoginTest {
     UserModel user = new UserModel(email, password, name);
 
     @Test
+    @DisplayName("Авторизация пользователя, позитивный сценарий")
     public void userLoginPositiveTest(){
         steps.createNewUser(user);
         steps.loginUserPositive(email, password);
+    }
+
+    @Test
+    @DisplayName("Авторизация пользователя, негативный сценарий с незаполненным логином")
+    public void userLoginWithoutEmailNegativeTest(){
+        steps.createNewUser(user);
+        steps.loginUserNegative(null, password);
+    }
+
+    @Test
+    @DisplayName("Авторизация пользователя, негативный сценарий с незаполненным паролем")
+    public void userLoginWithoutPasswordNegativeTest(){
+        steps.createNewUser(user);
+        steps.loginUserNegative(email, null);
     }
 }

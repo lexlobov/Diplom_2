@@ -70,7 +70,8 @@ public class UserSteps {
 
     @Step("Негативный сценарий авторизации пользователя")
     @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
-    public void loginUserNegative(UserModel user){
+    public void loginUserNegative(String email, String password){
+        UserModel user = new UserModel(email, password);
         ValidatableResponse response = loginUserClient.loginUser(user);
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
