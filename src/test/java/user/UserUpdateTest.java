@@ -30,6 +30,7 @@ public class UserUpdateTest {
         steps.createNewUser(user);
         steps.loginUserPositive(email, password);
         steps.updateUserPositive(newUser, newName, newEmail);
+        steps.deleteUser();
     }
 
     @Test
@@ -38,6 +39,7 @@ public class UserUpdateTest {
         steps.createNewUser(user);
         steps.loginUserPositive(email, password);
         steps.updateUserUnauthorizedNegative(newUser);
+        steps.deleteUser();
     }
 
     @Test
@@ -50,7 +52,7 @@ public class UserUpdateTest {
                 faker.name().firstName()));
         steps.loginUserPositive(email, password);
         steps.updateUserEmailAlreadyExistNegative(newName, existingMail);
-
+        steps.deleteUser();
 
     }
 }

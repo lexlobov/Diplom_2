@@ -21,6 +21,7 @@ public class UserRegistrationTest {
     @DisplayName("Создание пользователя, поизитвный сценарий")
     public void registerNewUserPositiveTest(){
         steps.createNewUser(user);
+        steps.deleteUser();
     }
 
     @Test
@@ -28,5 +29,6 @@ public class UserRegistrationTest {
     public void registerNewUserEmailAlreadyExistNegativeTest(){
         steps.createNewUser(user);
         steps.createNewUserAlreadyExistNegative(user);
+        steps.deleteUser();
     }
 }

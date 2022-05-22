@@ -34,6 +34,7 @@ public class UserSteps {
         assertThat("Success should be true", isSuccess, equalTo(true));
         assertThat("Access token should be not null", accessToken, notNullValue());
         assertThat("Refresh token should be not null", refreshToken, notNullValue());
+        setAuthToken(accessToken);
     }
 
     @Step("Авторизация пользователя")
@@ -94,7 +95,7 @@ public class UserSteps {
         ValidatableResponse response = deleteUserClient.deleteUser(authToken);
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
-        assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_OK));
+        assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_ACCEPTED));
         assertThat("Success should be true", isSuccess, equalTo(true));
     }
 

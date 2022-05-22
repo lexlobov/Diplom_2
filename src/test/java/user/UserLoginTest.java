@@ -22,6 +22,7 @@ public class UserLoginTest {
     public void userLoginPositiveTest(){
         steps.createNewUser(user);
         steps.loginUserPositive(email, password);
+        steps.deleteUser();
     }
 
     @Test
@@ -29,6 +30,7 @@ public class UserLoginTest {
     public void userLoginWithoutEmailNegativeTest(){
         steps.createNewUser(user);
         steps.loginUserNegative(null, password);
+        steps.deleteUser();
     }
 
     @Test
@@ -36,13 +38,15 @@ public class UserLoginTest {
     public void userLoginWithoutPasswordNegativeTest(){
         steps.createNewUser(user);
         steps.loginUserNegative(email, null);
+        steps.deleteUser();
     }
 
     @Test
-    @DisplayName("Авторизация пользователя, негативный сценарий с неверным паролем паролем")
+    @DisplayName("Авторизация пользователя, негативный сценарий с неверным паролем")
     public void userLoginWithWrongPasswordNegativeTest(){
         steps.createNewUser(user);
         steps.loginUserNegative(email, faker.lorem().characters(10, true));
+        steps.deleteUser();
     }
 
     @Test
@@ -50,5 +54,6 @@ public class UserLoginTest {
     public void userLoginWithWrongEmailNegativeTest(){
         steps.createNewUser(user);
         steps.loginUserNegative(faker.name().username() + "@maik.ru", password);
+        steps.deleteUser();
     }
 }
