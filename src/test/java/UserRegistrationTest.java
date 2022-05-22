@@ -10,7 +10,7 @@ public class UserRegistrationTest {
 
     String name = faker.name().firstName();
     String email = name + "@maik.ru";
-    String password = faker.lorem().characters(true);
+    String password = faker.lorem().characters(10,true);
 
     UserModel user = new UserModel(email, password, name);
 

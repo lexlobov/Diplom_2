@@ -2,6 +2,7 @@ import client.user.CreateUserClient;
 import client.user.DeleteUserClient;
 import client.user.LoginUserClient;
 import client.user.UpdateUserClient;
+import groovy.json.JsonToken;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
@@ -9,8 +10,7 @@ import model.UserModel;
 import org.apache.http.HttpStatus;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 
 public class UserSteps {
 
@@ -31,7 +31,8 @@ public class UserSteps {
 
     @Step("Авторизация пользователя")
     @Description("Проверяются код ответа, флаг success и наличие токенов")
-    public void loginUserPositive(UserModel user){
+    public void loginUserPositive(String email, String password){
+        UserModel user = new UserModel(email, password);
         ValidatableResponse response = loginUserClient.loginUser(user);
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
@@ -39,8 +40,8 @@ public class UserSteps {
         String refreshToken = response.extract().path("refreshToken");
         assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_OK));
         assertThat("Success should be true", isSuccess, equalTo(true));
-        assertThat("Access token should be not null", accessToken, equalTo(not(null)));
-        assertThat("Refresh token should be not null", refreshToken, equalTo(not(null)));
+        assertThat("Access token should be not null", accessToken, notNullValue());
+        assertThat("Refresh token should be not null", refreshToken, notNullValue());
     }
 
     @Step("Негативный сценарий создания пользователя при вводе почты, которая уже зарегистрирована")
