@@ -14,13 +14,13 @@ public class UserUpdateTest {
     Faker faker = new Faker();
 
     String name = faker.name().firstName();
-    String email = name + "@maik.ru";
+    String email = name + "@" + faker.name().lastName() + ".ru";
     String password = faker.lorem().characters(10, true);
 
     UserModel user = new UserModel(email, password, name);
 
     String newName = faker.name().firstName();
-    String newEmail = newName.toLowerCase(Locale.ROOT) + "@maik.ru";
+    String newEmail = newName.toLowerCase(Locale.ROOT) + "@" + faker.name().lastName().toLowerCase(Locale.ROOT) + ".ru";
 
     UserModel newUser = new UserModel(newEmail, null, newName);
 
@@ -44,7 +44,7 @@ public class UserUpdateTest {
     @DisplayName("Обновление пользователя, тест с уже использованной почтой")
     public void updateUserInfoWithUsedEmailNegativeTest(){
         steps.createNewUser(user);
-        String existingMail = faker.name().lastName() + "@maik.ru";
+        String existingMail = faker.name().lastName() + "@" + faker.name().lastName() + ".ru";
         steps.createNewUser(new UserModel(existingMail,
                 faker.lorem().characters(10, true),
                 faker.name().firstName()));

@@ -10,9 +10,9 @@ public class DeleteUserClient extends BaseHttpConfig {
 
     private final String deleteUserUri = "/api/auth/user";
 
-    public ValidatableResponse deleteUser(UserModel user){
+    public ValidatableResponse deleteUser(String authToken){
         return given().spec(baseSpec())
-                .body(user)
+                .header("authorization", authToken)
                 .when()
                 .delete(deleteUserUri)
                 .then();

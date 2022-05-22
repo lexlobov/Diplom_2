@@ -28,8 +28,12 @@ public class UserSteps {
         ValidatableResponse response = createUserClient.createUser(user);
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
+        String accessToken = response.extract().path("accessToken");
+        String refreshToken = response.extract().path("refreshToken");
         assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_OK));
         assertThat("Success should be true", isSuccess, equalTo(true));
+        assertThat("Access token should be not null", accessToken, notNullValue());
+        assertThat("Refresh token should be not null", refreshToken, notNullValue());
     }
 
     @Step("Авторизация пользователя")
@@ -86,8 +90,12 @@ public class UserSteps {
     }
 
     @Step("Удаление пользователя")
-    public void deleteUser(UserModel user){
-        ValidatableResponse response = deleteUserClient.deleteUser(user);
+    public void deleteUser(){
+        ValidatableResponse response = deleteUserClient.deleteUser(authToken);
+        int statusCode = response.extract().statusCode();
+        boolean isSuccess = response.extract().path("success");
+        assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_OK));
+        assertThat("Success should be true", isSuccess, equalTo(true));
     }
 
     @Step("Обновление данных пользователя")

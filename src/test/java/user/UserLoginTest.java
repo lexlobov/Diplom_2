@@ -12,7 +12,7 @@ public class UserLoginTest {
     Faker faker = new Faker();
 
     String name = faker.name().firstName();
-    String email = name + "@maik.ru";
+    String email = name + "@" + faker.name().lastName() + ".ru";
     String password = faker.lorem().characters(10, true);
 
     UserModel user = new UserModel(email, password, name);
