@@ -3,6 +3,7 @@ import io.qameta.allure.junit4.DisplayName;
 import model.UserModel;
 import org.junit.Test;
 
+@DisplayName("Различные сценарии создания пользователя")
 public class UserRegistrationTest {
 
     UserSteps steps = new UserSteps();

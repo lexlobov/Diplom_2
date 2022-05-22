@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+@DisplayName("Разилчные негативные сценарии создания пользователя")
 @RunWith(Parameterized.class)
 public class UserRegistrationParameterizedNegativeTest {
 
