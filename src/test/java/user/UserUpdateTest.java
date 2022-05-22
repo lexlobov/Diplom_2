@@ -39,4 +39,18 @@ public class UserUpdateTest {
         steps.loginUserPositive(email, password);
         steps.updateUserUnauthorizedNegative(newUser);
     }
+
+    @Test
+    @DisplayName("Обновление пользователя, тест с уже использованной почтой")
+    public void updateUserInfoWithUsedEmailNegativeTest(){
+        steps.createNewUser(user);
+        String existingMail = faker.name().lastName() + "@maik.ru";
+        steps.createNewUser(new UserModel(existingMail,
+                faker.lorem().characters(10, true),
+                faker.name().firstName()));
+        steps.loginUserPositive(email, password);
+        steps.updateUserEmailAlreadyExistNegative(newName, existingMail);
+
+
+    }
 }

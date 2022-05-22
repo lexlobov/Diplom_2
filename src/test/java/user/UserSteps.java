@@ -106,8 +106,9 @@ public class UserSteps {
 
     @Step("Негатинвный сценраий обновления пользователя с попыткой присовения почты, которая уже зарегистрирована")
     @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
-    public void updateUserEmailAlreadyExistNegative(UserModel user){
-        ValidatableResponse response = updateUserClient.updateUser(user, authToken);
+    public void updateUserEmailAlreadyExistNegative(String name, String existingEmail){
+        UserModel updatedUser = new UserModel(existingEmail, null, name);
+        ValidatableResponse response = updateUserClient.updateUser(updatedUser, authToken);
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         String message = response.extract().path("message");
