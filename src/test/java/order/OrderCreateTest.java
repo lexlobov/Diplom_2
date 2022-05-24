@@ -32,4 +32,9 @@ public class OrderCreateTest {
     public void createNewOrderPositiveTest(){
         orderSteps.createOrderPositive(userSteps.getAuthToken());
     }
+
+    @Test
+    public void createNewOrderWithoutAuthorizationPositiveTest(){
+        orderSteps.createOrderWithoutAuthorization();
+    }
 }

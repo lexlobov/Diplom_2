@@ -68,5 +68,28 @@ public class OrderSteps {
         assertThat("Order number should be not null", orderNumber, notNullValue());
     }
 
+    public void createOrderWithoutAuthorization(){
+        IngredientsModel ingredientsModel = getIngredientsClient.getIngredients();
+        IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
+        List<String> bunHashes = getBunHashes(ingredientsModel);
+        List<String> ingredientHashes = getIngredientHashes(ingredientsModel);
+        List<String> randomBurger = new ArrayList<>();
+        String authToken = "";
+
+        int i = random.nextInt(ingredientHashes.size());
+        for (int l=0; l<i; l++){
+            randomBurger.add(ingredientHashes.get(random.nextInt(ingredientHashes.size()-1)));
+        }
+        randomBurger.add(bunHashes.get(random.nextInt(bunHashes.size()-1)));
+        ingredientsCreateModel.setIngredients(randomBurger);
+        ValidatableResponse response = createOrderClient.createOrder(ingredientsCreateModel, authToken);
+        int statusCode = response.extract().statusCode();
+        boolean isSuccess = response.extract().path("success");
+        int orderNumber = response.extract().path("order.number");
+        assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_OK));
+        assertThat("Success should be true", isSuccess, equalTo(true));
+        assertThat("Order number should be not null", orderNumber, notNullValue());
+    }
+
     // TODO доделать метод
 }
