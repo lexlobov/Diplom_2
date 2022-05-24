@@ -15,7 +15,5 @@ public class GetUserOrdersClient extends BaseHttpConfig {
                 .when()
                 .get(getUserOrdersUri)
                 .then();
-
     }
-
 }
