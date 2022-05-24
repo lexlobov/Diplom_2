@@ -7,10 +7,14 @@ import io.restassured.response.ValidatableResponse;
 import model.IngredientModel;
 import model.IngredientsCreateModel;
 import model.IngredientsModel;
+import org.apache.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 public class OrderSteps {
 
@@ -19,29 +23,53 @@ public class OrderSteps {
     GetUserOrdersClient getUserOrdersClient = new GetUserOrdersClient();
     Random random = new Random();
 
-    public void createOrderPositive(String authToken){
-        IngredientsModel ingredientsModel = getIngredientsClient.getIngredients();
-        IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
-        List<String> ingredientHashes = new ArrayList<>();
+    public List<String> getBunHashes(IngredientsModel ingredientsModel) {
         List<String> bunHashes = new ArrayList<>();
-
-        for(IngredientModel ingredient : ingredientsModel.getIngredients()){
-            if (ingredient.getType() == "bun"){
+        for (IngredientModel ingredient : ingredientsModel.getIngredients()) {
+            if (ingredient.getType() == "bun") {
                 bunHashes.add(ingredient.get_id());
-            } else {
+            }
+        }
+        return bunHashes;
+    }
+
+    public List<String> getIngredientHashes(IngredientsModel ingredientsModel){
+        List<String> ingredientHashes = new ArrayList<>();
+        for(IngredientModel ingredient : ingredientsModel.getIngredients()) {
+            if (ingredient.getType() != "bun") {
                 ingredientHashes.add(ingredient.get_id());
             }
         }
+        return ingredientHashes;
+    }
+
+    public void createOrderPositive(String authToken){
+        IngredientsModel ingredientsModel = getIngredientsClient.getIngredients();
+        IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
+        List<String> ingredientHashes = getIngredientHashes(ingredientsModel);
+        List<String> bunHashes = getBunHashes(ingredientsModel);
+        List<String> randomBurger = new ArrayList<>();
+
+//        for(IngredientModel ingredient : ingredientsModel.getIngredients()){
+//            if (ingredient.getType() == "bun"){
+//                bunHashes.add(ingredient.get_id());
+//            } else {
+//                ingredientHashes.add(ingredient.get_id());
+//            }
+//        }
         int i = random.nextInt(ingredientHashes.size());
         for (int l=0; l<i; l++){
-            ingredientsCreateModel.getIngredients().add(ingredientHashes.get(random.nextInt(ingredientHashes.size()-1)));
+            randomBurger.add(ingredientHashes.get(random.nextInt(ingredientHashes.size()-1)));
         }
-        ingredientsCreateModel.getIngredients().add(bunHashes.get(random.nextInt(bunHashes.size()-1)));
+        randomBurger.add(bunHashes.get(random.nextInt(bunHashes.size()-1)));
+        ingredientsCreateModel.setIngredients(randomBurger);
         ValidatableResponse response = createOrderClient.createOrder(ingredientsCreateModel, authToken);
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         int orderNumber = response.extract().path("order.number");
-
+        assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_OK));
+        assertThat("Success should be true", isSuccess, equalTo(true));
+        assertThat("Order nunber should be not null", orderNumber, notNullValue());
     }
 
     // TODO доделать метод
