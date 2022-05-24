@@ -11,8 +11,9 @@ public class CreateOrderClient extends BaseHttpConfig {
 
     private final String createOrderUri = "/api/orders";
 
-    private ValidatableResponse createOrder(IngredientsCreateModel ingredients){
+    public ValidatableResponse createOrder(IngredientsCreateModel ingredients, String authToken){
         return given().spec(baseSpec())
+                .header("authorization", authToken)
                 .body(ingredients)
                 .when()
                 .post(createOrderUri)
