@@ -11,6 +11,7 @@ import org.apache.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,8 +26,8 @@ public class OrderSteps {
 
     public List<String> getBunHashes(IngredientsModel ingredientsModel) {
         List<String> bunHashes = new ArrayList<>();
-        for (IngredientModel ingredient : ingredientsModel.getIngredients()) {
-            if (ingredient.getType() == "bun") {
+        for (IngredientModel ingredient : ingredientsModel.getData()) {
+            if (Objects.equals(ingredient.getType(), "bun")) {
                 bunHashes.add(ingredient.get_id());
             }
         }
@@ -35,20 +36,26 @@ public class OrderSteps {
 
     public List<String> getIngredientHashes(IngredientsModel ingredientsModel){
         List<String> ingredientHashes = new ArrayList<>();
-        for(IngredientModel ingredient : ingredientsModel.getIngredients()) {
-            if (ingredient.getType() != "bun") {
+        for(IngredientModel ingredient : ingredientsModel.getData()) {
+            if (!(Objects.equals(ingredient.getType(), "bun"))) {
                 ingredientHashes.add(ingredient.get_id());
+                System.out.println(ingredient.getType());
             }
         }
         return ingredientHashes;
     }
 
+
+
     public void createOrderPositive(String authToken){
         IngredientsModel ingredientsModel = getIngredientsClient.getIngredients();
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
-        List<String> ingredientHashes = getIngredientHashes(ingredientsModel);
         List<String> bunHashes = getBunHashes(ingredientsModel);
+        List<String> ingredientHashes = getIngredientHashes(ingredientsModel);
         List<String> randomBurger = new ArrayList<>();
+
+        System.out.println(ingredientHashes);
+        System.out.println(bunHashes);
 
 //        for(IngredientModel ingredient : ingredientsModel.getIngredients()){
 //            if (ingredient.getType() == "bun"){

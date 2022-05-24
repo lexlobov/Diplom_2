@@ -5,7 +5,7 @@ import java.util.List;
 public class IngredientsModel {
 
     private boolean success;
-    private List<IngredientModel> ingredients;
+    private List<IngredientModel> data;
 
     public IngredientsModel() {
     }
@@ -18,11 +18,11 @@ public class IngredientsModel {
         this.success = success;
     }
 
-    public List<IngredientModel> getIngredients() {
-        return ingredients;
+    public List<IngredientModel> getData() {
+        return data;
     }
 
-    public void setIngredients(List<IngredientModel> ingredients) {
-        this.ingredients = ingredients;
+    public void setIngredients(List<IngredientModel> data) {
+        this.data = data;
     }
 }

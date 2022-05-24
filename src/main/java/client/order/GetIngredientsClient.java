@@ -12,8 +12,8 @@ public class GetIngredientsClient extends BaseHttpConfig {
 
     public IngredientsModel getIngredients(){
         return given().spec(baseSpec())
-                .when()
-                .get(getIngredientsUri).as(IngredientsModel.class);
+                .get(getIngredientsUri)
+                .body().as(IngredientsModel.class);
 
     }
 }
