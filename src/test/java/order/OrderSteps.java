@@ -39,7 +39,6 @@ public class OrderSteps {
         for(IngredientModel ingredient : ingredientsModel.getData()) {
             if (!(Objects.equals(ingredient.getType(), "bun"))) {
                 ingredientHashes.add(ingredient.get_id());
-                System.out.println(ingredient.getType());
             }
         }
         return ingredientHashes;
@@ -54,16 +53,6 @@ public class OrderSteps {
         List<String> ingredientHashes = getIngredientHashes(ingredientsModel);
         List<String> randomBurger = new ArrayList<>();
 
-        System.out.println(ingredientHashes);
-        System.out.println(bunHashes);
-
-//        for(IngredientModel ingredient : ingredientsModel.getIngredients()){
-//            if (ingredient.getType() == "bun"){
-//                bunHashes.add(ingredient.get_id());
-//            } else {
-//                ingredientHashes.add(ingredient.get_id());
-//            }
-//        }
         int i = random.nextInt(ingredientHashes.size());
         for (int l=0; l<i; l++){
             randomBurger.add(ingredientHashes.get(random.nextInt(ingredientHashes.size()-1)));
@@ -76,7 +65,7 @@ public class OrderSteps {
         int orderNumber = response.extract().path("order.number");
         assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_OK));
         assertThat("Success should be true", isSuccess, equalTo(true));
-        assertThat("Order nunber should be not null", orderNumber, notNullValue());
+        assertThat("Order number should be not null", orderNumber, notNullValue());
     }
 
     // TODO доделать метод
