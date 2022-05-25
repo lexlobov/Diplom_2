@@ -30,6 +30,7 @@ public class GetOrdersByUserTest {
 
     @Test
     public void getUserOrdersCheckStatusCodeAndSuccessPositiveTest(){
+        orderSteps.createOrderPositive(userSteps.getAuthToken());
         orderSteps.getOrdersOfClientAndCheckStatusCodeAndSuccess(userSteps.getAuthToken());
     }
 
@@ -37,5 +38,11 @@ public class GetOrdersByUserTest {
     public void getUserOrdersCheckLastOrderPositiveTest(){
         orderSteps.createOrderPositive(userSteps.getAuthToken());
         orderSteps.getOrdersOfClientAndCheckIfCreatedOrderIsInList(userSteps.getAuthToken());
+    }
+
+    @Test
+    public void getUserOrdersUnauthorizedNegativeTest(){
+        orderSteps.createOrderPositive(userSteps.getAuthToken());
+        orderSteps.getOrdersOfClientWithoutAuthorization();
     }
 }

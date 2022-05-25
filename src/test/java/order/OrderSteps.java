@@ -147,5 +147,15 @@ public class OrderSteps {
         int newOrderNumber = lastOrder.getNumber();
         assertThat("Order number should match previously created order", newOrderNumber, equalTo(getOrderNumber()));
 
-    }    // TODO доделать метод
+    }
+
+    public void getOrdersOfClientWithoutAuthorization(){
+        ValidatableResponse response = getUserOrdersClient.getUserOrdersWithoutAuthorization();
+        int statusCode = response.extract().statusCode();
+        boolean isSuccess = response.extract().path("success");
+        String message = response.extract().path("message");
+        assertThat("Status code should be 401", statusCode, equalTo(HttpStatus.SC_UNAUTHORIZED));
+        assertThat("Success should be false", isSuccess, equalTo(false));
+        assertThat("Message should be 'You should be authorised'", message, equalTo("You should be authorised"));
+    }
 }

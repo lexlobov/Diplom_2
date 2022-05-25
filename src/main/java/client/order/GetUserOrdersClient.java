@@ -26,4 +26,11 @@ public class GetUserOrdersClient extends BaseHttpConfig {
                 .get(getUserOrdersUri)
                 .body().as(OrdersApiResponseModel.class);
     }
+
+    public ValidatableResponse getUserOrdersWithoutAuthorization(){
+        return given().spec(baseSpec())
+                .when()
+                .get(getUserOrdersUri)
+                .then();
+    }
 }
