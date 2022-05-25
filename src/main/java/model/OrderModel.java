@@ -6,6 +6,7 @@ public class OrderModel {
     private List<String > ingredients;
     private String _id;
     private String status;
+    private int number;
     private String createdAt;
     private String updatedAt;
 
@@ -50,5 +51,13 @@ public class OrderModel {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 }

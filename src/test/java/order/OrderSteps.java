@@ -5,9 +5,7 @@ import client.order.GetIngredientsClient;
 import client.order.GetUserOrdersClient;
 import com.github.javafaker.Faker;
 import io.restassured.response.ValidatableResponse;
-import model.IngredientModel;
-import model.IngredientsCreateModel;
-import model.IngredientsModel;
+import model.*;
 import org.apache.http.HttpStatus;
 
 import java.util.ArrayList;
@@ -19,6 +17,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 public class OrderSteps {
+
+    private int orderNumber;
+
+    public int getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(int orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+
 
     CreateOrderClient createOrderClient = new CreateOrderClient();
     GetIngredientsClient getIngredientsClient = new GetIngredientsClient();
@@ -77,13 +87,13 @@ public class OrderSteps {
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         int orderNumber = response.extract().path("order.number");
+        setOrderNumber(orderNumber);
         assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_OK));
         assertThat("Success should be true", isSuccess, equalTo(true));
         assertThat("Order number should be not null", orderNumber, notNullValue());
     }
 
     public void createOrderWithoutAuthorization(){
-        String authToken = "";
         IngredientsModel ingredientsModel = getIngredientsClient.getIngredients();
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
         String randomBun = getRandomBun(ingredientsModel);
@@ -119,5 +129,23 @@ public class OrderSteps {
         int statusCode = response.extract().statusCode();
         assertThat("Status code should be 500", statusCode, equalTo(HttpStatus.SC_INTERNAL_SERVER_ERROR));
     }
-    // TODO доделать метод
+
+
+    public void getOrdersOfClientAndCheckStatusCodeAndSuccess(String authToken){
+        ValidatableResponse response = getUserOrdersClient.getUserOrders(authToken);
+        int statusCode = response.extract().statusCode();
+        boolean isSuccess = response.extract().path("success");
+        assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_OK));
+        assertThat("Success should be true", isSuccess, equalTo(true));
+    }
+
+    public void getOrdersOfClientAndCheckIfCreatedOrderIsInList(String authToken)
+    {
+        OrdersApiResponseModel orders = getUserOrdersClient.getUserOrdersAsOrdersClass(authToken);
+        List<OrderModel> orderList = orders.getOrders();
+        OrderModel lastOrder = orderList.get(orderList.size()-1);
+        int newOrderNumber = lastOrder.getNumber();
+        assertThat("Order number should match previously created order", newOrderNumber, equalTo(getOrderNumber()));
+
+    }    // TODO доделать метод
 }
