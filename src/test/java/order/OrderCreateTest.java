@@ -42,4 +42,9 @@ public class OrderCreateTest {
     public void createOrderWithoutIngredientsNegativeTest(){
         orderSteps.createOrderWithoutIngredients(userSteps.getAuthToken());
     }
+
+    @Test
+    public void createOrderWithInvalidIngredientHashesNegativeTest(){
+        orderSteps.createOrderWithInvalidIngredientHashes(userSteps.getAuthToken());
+    }
 }

@@ -3,6 +3,7 @@ package order;
 import client.order.CreateOrderClient;
 import client.order.GetIngredientsClient;
 import client.order.GetUserOrdersClient;
+import com.github.javafaker.Faker;
 import io.restassured.response.ValidatableResponse;
 import model.IngredientModel;
 import model.IngredientsCreateModel;
@@ -96,8 +97,23 @@ public class OrderSteps {
         ValidatableResponse response = createOrderClient.createOrder(ingredientsCreateModel, authToken);
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
+        String message = response.extract().path("message");
         assertThat("Status code should be 400", statusCode, equalTo(HttpStatus.SC_BAD_REQUEST));
         assertThat("Success should be false", isSuccess, equalTo(false));
+        assertThat("Message should be 'Ingredient ids must be provided'", message, equalTo("Ingredient ids must be provided"));
+    }
+
+    public void createOrderWithInvalidIngredientHashes(String authToken){
+        IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
+        Faker faker = new Faker();
+        List<String> randomBurger = new ArrayList<>();
+        for (int l=0; l<5; l++){
+            randomBurger.add(faker.lorem().characters(10, true));
+        }
+        ingredientsCreateModel.setIngredients(randomBurger);
+        ValidatableResponse response = createOrderClient.createOrder(ingredientsCreateModel, authToken);
+        int statusCode = response.extract().statusCode();
+        assertThat("Status code should be 500", statusCode, equalTo(HttpStatus.SC_INTERNAL_SERVER_ERROR));
     }
     // TODO доделать метод
 }
