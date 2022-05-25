@@ -4,6 +4,8 @@ import client.order.CreateOrderClient;
 import client.order.GetIngredientsClient;
 import client.order.GetUserOrdersClient;
 import com.github.javafaker.Faker;
+import io.qameta.allure.Description;
+import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
 import model.*;
 import org.apache.http.HttpStatus;
@@ -35,6 +37,7 @@ public class OrderSteps {
     GetUserOrdersClient getUserOrdersClient = new GetUserOrdersClient();
     Random random = new Random();
 
+    @Step("Получение хэша одной булки из списка всех ингредиентов")
     public String getRandomBun(IngredientsModel ingredientsModel) {
         List<String> bunHashes = new ArrayList<>();
         for (IngredientModel ingredient : ingredientsModel.getData()) {
@@ -46,6 +49,7 @@ public class OrderSteps {
         return randomBun;
     }
 
+    @Step("Получение списка хэшей всех ингредиентов, которые не являются булками")
     public List<String> getIngredientHashes(IngredientsModel ingredientsModel){
         List<String> ingredientHashes = new ArrayList<>();
         for(IngredientModel ingredient : ingredientsModel.getData()) {
@@ -56,6 +60,7 @@ public class OrderSteps {
         return ingredientHashes;
     }
 
+    @Step("Создание невалидных хэшей ингредиентов в количестве 4 штук")
     public List<String> generateFakeIngredientHashes(){
         List<String> randomBurgerWithFakeHashes = new ArrayList<>();
         Faker faker = new Faker();
@@ -65,6 +70,7 @@ public class OrderSteps {
         return randomBurgerWithFakeHashes;
     }
 
+    @Step("Создание случайного списка ингредиентов, которые пойдут в заказ")
     public List<String> generateBurgerWithRandomIngredients(List<String> ingredientHashes){
         int i = random.nextInt(ingredientHashes.size());
         List<String> randomBurger = new ArrayList<>();
@@ -74,6 +80,8 @@ public class OrderSteps {
         return randomBurger;
     }
 
+    @Step("Создание заказа")
+    @Description("Проверки статус кода, флага success, а также, что номер заказа не null")
     public void createOrderPositive(String authToken){
         IngredientsModel ingredientsModel = getIngredientsClient.getIngredients();
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
@@ -93,6 +101,8 @@ public class OrderSteps {
         assertThat("Order number should be not null", orderNumber, notNullValue());
     }
 
+    @Step("Создание заказа без авторизации")
+    @Description("Проверки статус кода, флага success, а также, что номер заказа не null")
     public void createOrderWithoutAuthorization(){
         IngredientsModel ingredientsModel = getIngredientsClient.getIngredients();
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
@@ -111,6 +121,8 @@ public class OrderSteps {
         assertThat("Order number should be not null", orderNumber, notNullValue());
     }
 
+    @Step("Создание заказа без ингредиентов")
+    @Description("Проверки статус кода, флага success и сообщения")
     public void createOrderWithoutIngredients(String authToken){
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
         ValidatableResponse response = createOrderClient.createOrder(ingredientsCreateModel, authToken);
@@ -122,6 +134,8 @@ public class OrderSteps {
         assertThat("Message should be 'Ingredient ids must be provided'", message, equalTo("Ingredient ids must be provided"));
     }
 
+    @Step("Создание заказа с невалидными хэшами ингредиентов")
+    @Description("Проверка статус кода")
     public void createOrderWithInvalidIngredientHashes(String authToken){
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
         ingredientsCreateModel.setIngredients(generateFakeIngredientHashes());
@@ -130,7 +144,8 @@ public class OrderSteps {
         assertThat("Status code should be 500", statusCode, equalTo(HttpStatus.SC_INTERNAL_SERVER_ERROR));
     }
 
-
+    @Step("Получение списка заказов пользователя")
+    @Description("Проверки статус кода, флага success")
     public void getOrdersOfClientAndCheckStatusCodeAndSuccess(String authToken){
         ValidatableResponse response = getUserOrdersClient.getUserOrders(authToken);
         int statusCode = response.extract().statusCode();
@@ -139,6 +154,8 @@ public class OrderSteps {
         assertThat("Success should be true", isSuccess, equalTo(true));
     }
 
+    @Step("Получение списка заказов пользователя")
+    @Description("Проверка того, что номер заказа, который приходит в запросе соответствует номеру, который пришел при создании заказа")
     public void getOrdersOfClientAndCheckIfCreatedOrderIsInList(String authToken)
     {
         OrdersApiResponseModel orders = getUserOrdersClient.getUserOrdersAsOrdersClass(authToken);
@@ -149,6 +166,8 @@ public class OrderSteps {
 
     }
 
+    @Step("Получение списка заказов пользователя без авторизации")
+    @Description("Проверки статус кода, флага success и сообщения")
     public void getOrdersOfClientWithoutAuthorization(){
         ValidatableResponse response = getUserOrdersClient.getUserOrdersWithoutAuthorization();
         int statusCode = response.extract().statusCode();

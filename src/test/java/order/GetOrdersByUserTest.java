@@ -1,12 +1,14 @@
 package order;
 
 import com.github.javafaker.Faker;
+import io.qameta.allure.junit4.DisplayName;
 import model.UserModel;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import user.UserSteps;
 
+@DisplayName("Различные сценарии получения списка заказов пользователя")
 public class GetOrdersByUserTest {
 
     OrderSteps orderSteps = new OrderSteps();
@@ -29,18 +31,21 @@ public class GetOrdersByUserTest {
     }
 
     @Test
+    @DisplayName("Получение списка заказов, позитивный сценарий")
     public void getUserOrdersCheckStatusCodeAndSuccessPositiveTest(){
         orderSteps.createOrderPositive(userSteps.getAuthToken());
         orderSteps.getOrdersOfClientAndCheckStatusCodeAndSuccess(userSteps.getAuthToken());
     }
 
     @Test
+    @DisplayName("Получение списка заказов, позитвный сценарий и сравнение заказа в списке с  ранее созданным")
     public void getUserOrdersCheckLastOrderPositiveTest(){
         orderSteps.createOrderPositive(userSteps.getAuthToken());
         orderSteps.getOrdersOfClientAndCheckIfCreatedOrderIsInList(userSteps.getAuthToken());
     }
 
     @Test
+    @DisplayName("Получение списка заказов, негативный сценарий без авторизации")
     public void getUserOrdersUnauthorizedNegativeTest(){
         orderSteps.createOrderPositive(userSteps.getAuthToken());
         orderSteps.getOrdersOfClientWithoutAuthorization();
