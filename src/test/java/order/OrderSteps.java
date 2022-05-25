@@ -25,14 +25,15 @@ public class OrderSteps {
     GetUserOrdersClient getUserOrdersClient = new GetUserOrdersClient();
     Random random = new Random();
 
-    public List<String> getBunHashes(IngredientsModel ingredientsModel) {
+    public String getRandomBun(IngredientsModel ingredientsModel) {
         List<String> bunHashes = new ArrayList<>();
         for (IngredientModel ingredient : ingredientsModel.getData()) {
             if (Objects.equals(ingredient.getType(), "bun")) {
                 bunHashes.add(ingredient.get_id());
             }
         }
-        return bunHashes;
+        String randomBun = bunHashes.get(random.nextInt(bunHashes.size()-1));
+        return randomBun;
     }
 
     public List<String> getIngredientHashes(IngredientsModel ingredientsModel){
@@ -45,21 +46,33 @@ public class OrderSteps {
         return ingredientHashes;
     }
 
+    public List<String> generateFakeIngredientHashes(){
+        List<String> randomBurgerWithFakeHashes = new ArrayList<>();
+        Faker faker = new Faker();
+        for (int l=0; l<5; l++){
+           randomBurgerWithFakeHashes.add(faker.lorem().characters(10, true));
+        }
+        return randomBurgerWithFakeHashes;
+    }
 
+    public List<String> generateBurgerWithRandomIngredients(List<String> ingredientHashes){
+        int i = random.nextInt(ingredientHashes.size());
+        List<String> randomBurger = new ArrayList<>();
+        for (int l=0; l<i; l++){
+            randomBurger.add(ingredientHashes.get(random.nextInt(ingredientHashes.size()-1)));
+        }
+        return randomBurger;
+    }
 
     public void createOrderPositive(String authToken){
         IngredientsModel ingredientsModel = getIngredientsClient.getIngredients();
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
-        List<String> bunHashes = getBunHashes(ingredientsModel);
+        String randomBun = getRandomBun(ingredientsModel);
         List<String> ingredientHashes = getIngredientHashes(ingredientsModel);
-        List<String> randomBurger = new ArrayList<>();
-
-        int i = random.nextInt(ingredientHashes.size());
-        for (int l=0; l<i; l++){
-            randomBurger.add(ingredientHashes.get(random.nextInt(ingredientHashes.size()-1)));
-        }
-        randomBurger.add(bunHashes.get(random.nextInt(bunHashes.size()-1)));
+        List<String> randomBurger = generateBurgerWithRandomIngredients(ingredientHashes);
+        randomBurger.add(randomBun);
         ingredientsCreateModel.setIngredients(randomBurger);
+
         ValidatableResponse response = createOrderClient.createOrder(ingredientsCreateModel, authToken);
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
@@ -70,20 +83,16 @@ public class OrderSteps {
     }
 
     public void createOrderWithoutAuthorization(){
+        String authToken = "";
         IngredientsModel ingredientsModel = getIngredientsClient.getIngredients();
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
-        List<String> bunHashes = getBunHashes(ingredientsModel);
+        String randomBun = getRandomBun(ingredientsModel);
         List<String> ingredientHashes = getIngredientHashes(ingredientsModel);
-        List<String> randomBurger = new ArrayList<>();
-        String authToken = "";
-
-        int i = random.nextInt(ingredientHashes.size());
-        for (int l=0; l<i; l++){
-            randomBurger.add(ingredientHashes.get(random.nextInt(ingredientHashes.size()-1)));
-        }
-        randomBurger.add(bunHashes.get(random.nextInt(bunHashes.size()-1)));
+        List<String> randomBurger = generateBurgerWithRandomIngredients(ingredientHashes);
+        randomBurger.add(randomBun);
         ingredientsCreateModel.setIngredients(randomBurger);
-        ValidatableResponse response = createOrderClient.createOrder(ingredientsCreateModel, authToken);
+
+        ValidatableResponse response = createOrderClient.createOrderWithoutAuthorization(ingredientsCreateModel);
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         int orderNumber = response.extract().path("order.number");
@@ -105,12 +114,7 @@ public class OrderSteps {
 
     public void createOrderWithInvalidIngredientHashes(String authToken){
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
-        Faker faker = new Faker();
-        List<String> randomBurger = new ArrayList<>();
-        for (int l=0; l<5; l++){
-            randomBurger.add(faker.lorem().characters(10, true));
-        }
-        ingredientsCreateModel.setIngredients(randomBurger);
+        ingredientsCreateModel.setIngredients(generateFakeIngredientHashes());
         ValidatableResponse response = createOrderClient.createOrder(ingredientsCreateModel, authToken);
         int statusCode = response.extract().statusCode();
         assertThat("Status code should be 500", statusCode, equalTo(HttpStatus.SC_INTERNAL_SERVER_ERROR));

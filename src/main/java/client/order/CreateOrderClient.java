@@ -19,4 +19,12 @@ public class CreateOrderClient extends BaseHttpConfig {
                 .post(createOrderUri)
                 .then();
     }
+
+    public ValidatableResponse createOrderWithoutAuthorization(IngredientsCreateModel ingredients){
+        return given().spec(baseSpec())
+                .body(ingredients)
+                .when()
+                .post(createOrderUri)
+                .then();
+    }
 }
