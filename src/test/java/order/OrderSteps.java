@@ -91,5 +91,13 @@ public class OrderSteps {
         assertThat("Order number should be not null", orderNumber, notNullValue());
     }
 
+    public void createOrderWithoutIngredients(String authToken){
+        IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
+        ValidatableResponse response = createOrderClient.createOrder(ingredientsCreateModel, authToken);
+        int statusCode = response.extract().statusCode();
+        boolean isSuccess = response.extract().path("success");
+        assertThat("Status code should be 400", statusCode, equalTo(HttpStatus.SC_BAD_REQUEST));
+        assertThat("Success should be false", isSuccess, equalTo(false));
+    }
     // TODO доделать метод
 }

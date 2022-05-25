@@ -37,4 +37,9 @@ public class OrderCreateTest {
     public void createNewOrderWithoutAuthorizationPositiveTest(){
         orderSteps.createOrderWithoutAuthorization();
     }
+
+    @Test
+    public void createOrderWithoutIngredientsNegativeTest(){
+        orderSteps.createOrderWithoutIngredients(userSteps.getAuthToken());
+    }
 }
