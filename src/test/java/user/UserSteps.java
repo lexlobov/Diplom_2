@@ -120,7 +120,7 @@ public class UserSteps {
         return updateUserClient.updateUser(user, authToken);
     }
 
-    @Step("Проверка, что пользователь удален успешно")
+    @Step("Проверка, что пользователь обновлен успешно")
     public void checkUserUpdated(ValidatableResponse response, String newName, String newEmail){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
@@ -145,8 +145,12 @@ public class UserSteps {
 
     @Step("Негативный сценарий обновления пользователя, когда нет авторизации")
     @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
-    public void updateUserUnauthorizedNegative(UserModel user){
-        ValidatableResponse response = updateUserClient.updateUser(user, "");
+    public ValidatableResponse updateUserUnauthorizedNegative(UserModel user){
+        return updateUserClient.updateUser(user, "");
+
+    }
+
+    public void checkUnauthorizedUserNotUpdated(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         String message = response.extract().path("message");

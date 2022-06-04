@@ -49,7 +49,8 @@ public class UserUpdateTest {
     @DisplayName("Обнволение пользователя, негативный сценарий без авторизационного токена")
     public void updateUserInfoWithoutAuthorizationNegativeTest(){
         steps.loginUserPositive(email, password);
-        steps.updateUserUnauthorizedNegative(newUser);
+        ValidatableResponse response = steps.updateUserUnauthorizedNegative(newUser);
+        steps.checkUnauthorizedUserNotUpdated(response);
     }
 
     @Test
