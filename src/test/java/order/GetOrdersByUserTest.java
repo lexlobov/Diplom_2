@@ -3,6 +3,7 @@ package order;
 import com.github.javafaker.Faker;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
+import model.OrderModel;
 import model.UserModel;
 import org.junit.After;
 import org.junit.Before;
@@ -43,13 +44,15 @@ public class GetOrdersByUserTest {
     @DisplayName("Получение списка заказов, позитвный сценарий и сравнение заказа в списке с  ранее созданным")
     public void getUserOrdersCheckLastOrderPositiveTest(){
         orderSteps.createOrderPositive(userSteps.getAuthToken());
-        orderSteps.getOrdersOfClientAndCheckIfCreatedOrderIsInList(userSteps.getAuthToken());
+        OrderModel order = orderSteps.getOrdersOfClientAndCheckIfCreatedOrderIsInList(userSteps.getAuthToken());
+        orderSteps.checkOrderNumberCorrect(order);
     }
 
     @Test
     @DisplayName("Получение списка заказов, негативный сценарий без авторизации")
     public void getUserOrdersUnauthorizedNegativeTest(){
         orderSteps.createOrderPositive(userSteps.getAuthToken());
-        orderSteps.getOrdersOfClientWithoutAuthorization();
+        ValidatableResponse response = orderSteps.getOrdersOfClientWithoutAuthorization();
+        orderSteps.checkOrdersOfClientDontReturnWithoutAuthorization(response);
     }
 }

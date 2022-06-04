@@ -85,16 +85,17 @@ public class OrderSteps {
         List<String> randomBurger = generateBurgerWithRandomIngredients(ingredientHashes);
         randomBurger.add(randomBun);
         ingredientsCreateModel.setIngredients(randomBurger);
-        return orderClient.createOrder(ingredientsCreateModel, authToken);
-
+        ValidatableResponse response = orderClient.createOrder(ingredientsCreateModel, authToken);
+        setOrderNumber(response.extract().path("order.number"));
+        return response;
     }
+
     @Step("Проверка, что заказ успешно создан")
     @Description("Проверки статус кода, флага success, а также, что номер заказа не null")
     public void checkOrderCreated(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         int orderNumber = response.extract().path("order.number");
-        setOrderNumber(orderNumber);
         assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_OK));
         assertThat("Success should be true", isSuccess, equalTo(true));
         assertThat("Order number should be not null", orderNumber, notNullValue());
@@ -157,20 +158,25 @@ public class OrderSteps {
 
     @Step("Получение списка заказов пользователя")
     @Description("Проверка того, что номер заказа, который приходит в запросе соответствует номеру, который пришел при создании заказа")
-    public void getOrdersOfClientAndCheckIfCreatedOrderIsInList(String authToken)
+    public OrderModel getOrdersOfClientAndCheckIfCreatedOrderIsInList(String authToken)
     {
         OrdersApiResponseModel orders = orderClient.getUserOrdersAsOrdersClass(authToken);
         List<OrderModel> orderList = orders.getOrders();
-        OrderModel lastOrder = orderList.get(orderList.size()-1);
-        int newOrderNumber = lastOrder.getNumber();
-        assertThat("Order number should match previously created order", newOrderNumber, equalTo(getOrderNumber()));
+        return orderList.get(orderList.size()-1);
+    }
 
+    public void checkOrderNumberCorrect(OrderModel order){
+        int newOrderNumber = order.getNumber();
+        assertThat("Order number should match previously created order", newOrderNumber, equalTo(getOrderNumber()));
     }
 
     @Step("Получение списка заказов пользователя без авторизации")
     @Description("Проверки статус кода, флага success и сообщения")
-    public void getOrdersOfClientWithoutAuthorization(){
-        ValidatableResponse response = orderClient.getUserOrdersWithoutAuthorization();
+    public ValidatableResponse getOrdersOfClientWithoutAuthorization(){
+        return orderClient.getUserOrdersWithoutAuthorization();
+    }
+
+    public void checkOrdersOfClientDontReturnWithoutAuthorization(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         String message = response.extract().path("message");
