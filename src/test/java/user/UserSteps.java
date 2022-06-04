@@ -77,8 +77,7 @@ public class UserSteps {
 
     @Step("Негативный сценарий создания пользователя при пропуске обязательных полей")
     @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
-    public void createNewUserNotEnoughDataNegative(UserModel user){
-        ValidatableResponse response = createUserClient.createUser(user);
+    public void checkNewUserNotEnoughDataNegative(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         String message = response.extract().path("message");
@@ -89,9 +88,7 @@ public class UserSteps {
 
     @Step("Негативный сценарий авторизации пользователя")
     @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
-    public void loginUserNegative(String email, String password){
-        UserModel user = new UserModel(email, password);
-        ValidatableResponse response = loginUserClient.loginUser(user);
+    public void checkLoginUserNegative(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         String message = response.extract().path("message");

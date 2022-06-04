@@ -40,24 +40,28 @@ public class UserLoginTest {
     @Test
     @DisplayName("Авторизация пользователя, негативный сценарий с незаполненным логином")
     public void userLoginWithoutEmailNegativeTest(){
-        steps.loginUserNegative(null, password);
+        ValidatableResponse response = steps.loginUserPositive(null, password);
+        steps.checkLoginUserNegative(response);
     }
 
     @Test
     @DisplayName("Авторизация пользователя, негативный сценарий с незаполненным паролем")
     public void userLoginWithoutPasswordNegativeTest(){
-        steps.loginUserNegative(email, null);
+        ValidatableResponse response = steps.loginUserPositive(email, null);
+        steps.checkLoginUserNegative(response);
     }
 
     @Test
     @DisplayName("Авторизация пользователя, негативный сценарий с неверным паролем")
     public void userLoginWithWrongPasswordNegativeTest(){
-        steps.loginUserNegative(email, faker.lorem().characters(10, true));
+        ValidatableResponse response = steps.loginUserPositive(email, faker.lorem().characters(10, true));
+        steps.checkLoginUserNegative(response);
     }
 
     @Test
     @DisplayName("Авторизация пользователя, негативный сценарий с неверным email")
     public void userLoginWithWrongEmailNegativeTest(){
-        steps.loginUserNegative(faker.name().username() + "@maik.ru", password);
+        ValidatableResponse response = steps.loginUserPositive(faker.name().username() + "@maik.ru", password);
+        steps.checkLoginUserNegative(response);
     }
 }

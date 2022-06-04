@@ -2,6 +2,7 @@ package user;
 
 import com.github.javafaker.Faker;
 import io.qameta.allure.junit4.DisplayName;
+import io.restassured.response.ValidatableResponse;
 import model.UserModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,8 +42,8 @@ public class UserRegistrationParameterizedNegativeTest {
     @DisplayName("Создание пользователя, негативный параметризованный тест с незаполненными полям")
     public void createNewUserNotEnoughData(){
         UserModel user = new UserModel(email, name, password);
-        steps.createNewUserNotEnoughDataNegative(user);
-        steps.loginUserPositive(email, password);
+        ValidatableResponse response = steps.createNewUser(user);
+        steps.checkNewUserNotEnoughDataNegative(response);
         steps.deleteUser();
     }
 }
