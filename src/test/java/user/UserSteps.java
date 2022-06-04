@@ -105,6 +105,7 @@ public class UserSteps {
         return deleteUserClient.deleteUser(authToken);
     }
 
+    @Step("Проверка, что пользователь удален")
     public void checkUserDeleted(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
@@ -114,10 +115,12 @@ public class UserSteps {
 
     @Step("Обновление данных пользователя")
     @Description("Проверяются код ответа, флаг success и обновленное имя и почта в ответе")
-    public ValidatableResponse updateUserPositive(UserModel user, String newName, String newEmail){
+    public ValidatableResponse updateUserPositive(String newName, String newEmail){
+        UserModel user = new UserModel(newEmail, null, newName);
         return updateUserClient.updateUser(user, authToken);
     }
 
+    @Step("Проверка, что пользователь удален успешно")
     public void checkUserUpdated(ValidatableResponse response, String newName, String newEmail){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
@@ -131,9 +134,7 @@ public class UserSteps {
 
     @Step("Негатинвный сценраий обновления пользователя с попыткой присовения почты, которая уже зарегистрирована")
     @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
-    public void updateUserEmailAlreadyExistNegative(String name, String existingEmail){
-        UserModel updatedUser = new UserModel(existingEmail, null, name);
-        ValidatableResponse response = updateUserClient.updateUser(updatedUser, authToken);
+    public void checkUpdateUserEmailAlreadyExistNegative(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         String message = response.extract().path("message");

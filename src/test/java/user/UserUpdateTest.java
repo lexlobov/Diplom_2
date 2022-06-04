@@ -41,7 +41,7 @@ public class UserUpdateTest {
     @DisplayName("Обновление пользователя, положительный сценарий")
     public void updateUserInfoTest(){
         steps.loginUserPositive(email, password);
-        ValidatableResponse response = steps.updateUserPositive(newUser, newName, newEmail);
+        ValidatableResponse response = steps.updateUserPositive(newName, newEmail);
         steps.checkUserUpdated(response, newName, newEmail);
     }
 
@@ -56,10 +56,16 @@ public class UserUpdateTest {
     @DisplayName("Обновление пользователя, тест с уже использованной почтой")
     public void updateUserInfoWithUsedEmailNegativeTest(){
         String existingMail = faker.name().lastName() + "@" + faker.name().lastName() + ".ru";
-        steps.createNewUser(new UserModel(existingMail,
-                faker.lorem().characters(10, true),
-                faker.name().firstName()));
+        String newPassword = faker.lorem().characters(10, true);
+        UserModel newUserWithExistingEmail = new UserModel(existingMail,
+                newPassword,
+                faker.name().firstName());
+        steps.createNewUser(newUserWithExistingEmail);
         steps.loginUserPositive(email, password);
-        steps.updateUserEmailAlreadyExistNegative(newName, existingMail);
+        ValidatableResponse response = steps.updateUserPositive(newName, existingMail);
+        steps.checkUpdateUserEmailAlreadyExistNegative(response);
+        steps.loginUserPositive(existingMail, newPassword);
+        steps.deleteUser();
+        steps.loginUserPositive(email, password);
     }
 }
