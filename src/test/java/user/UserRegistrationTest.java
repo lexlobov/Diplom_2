@@ -3,6 +3,8 @@ package user;
 import com.github.javafaker.Faker;
 import io.qameta.allure.junit4.DisplayName;
 import model.UserModel;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 @DisplayName("Различные сценарии создания пользователя")
@@ -17,11 +19,15 @@ public class UserRegistrationTest {
 
     UserModel user = new UserModel(email, password, name);
 
+    @After
+    public void cleanUp(){
+        steps.deleteUser();
+    }
+
     @Test
     @DisplayName("Создание пользователя, поизитвный сценарий")
     public void registerNewUserPositiveTest(){
         steps.createNewUser(user);
-        steps.deleteUser();
     }
 
     @Test
@@ -29,6 +35,5 @@ public class UserRegistrationTest {
     public void registerNewUserEmailAlreadyExistNegativeTest(){
         steps.createNewUser(user);
         steps.createNewUserAlreadyExistNegative(user);
-        steps.deleteUser();
     }
 }
