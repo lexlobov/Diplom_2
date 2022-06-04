@@ -114,8 +114,11 @@ public class UserSteps {
 
     @Step("Обновление данных пользователя")
     @Description("Проверяются код ответа, флаг success и обновленное имя и почта в ответе")
-    public void updateUserPositive(UserModel user, String newName, String newEmail){
-        ValidatableResponse response = updateUserClient.updateUser(user, authToken);
+    public ValidatableResponse updateUserPositive(UserModel user, String newName, String newEmail){
+        return updateUserClient.updateUser(user, authToken);
+    }
+
+    public void checkUserUpdated(ValidatableResponse response, String newName, String newEmail){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         String newNameActual = response.extract().path("user.name");

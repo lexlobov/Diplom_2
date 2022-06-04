@@ -2,6 +2,7 @@ package user;
 
 import com.github.javafaker.Faker;
 import io.qameta.allure.junit4.DisplayName;
+import io.restassured.response.ValidatableResponse;
 import model.UserModel;
 import org.junit.After;
 import org.junit.Before;
@@ -40,7 +41,8 @@ public class UserUpdateTest {
     @DisplayName("Обновление пользователя, положительный сценарий")
     public void updateUserInfoTest(){
         steps.loginUserPositive(email, password);
-        steps.updateUserPositive(newUser, newName, newEmail);
+        ValidatableResponse response = steps.updateUserPositive(newUser, newName, newEmail);
+        steps.checkUserUpdated(response, newName, newEmail);
     }
 
     @Test
