@@ -2,6 +2,7 @@ package order;
 
 import com.github.javafaker.Faker;
 import io.qameta.allure.junit4.DisplayName;
+import io.restassured.response.ValidatableResponse;
 import model.UserModel;
 import org.junit.After;
 import org.junit.Before;
@@ -34,7 +35,8 @@ public class GetOrdersByUserTest {
     @DisplayName("Получение списка заказов, позитивный сценарий")
     public void getUserOrdersCheckStatusCodeAndSuccessPositiveTest(){
         orderSteps.createOrderPositive(userSteps.getAuthToken());
-        orderSteps.getOrdersOfClientAndCheckStatusCodeAndSuccess(userSteps.getAuthToken());
+        ValidatableResponse response = orderSteps.getOrdersOfClientAndCheckStatusCodeAndSuccess(userSteps.getAuthToken());
+        orderSteps.checkOrdersReturned(response);
     }
 
     @Test

@@ -144,8 +144,11 @@ public class OrderSteps {
 
     @Step("Получение списка заказов пользователя")
     @Description("Проверки статус кода, флага success")
-    public void getOrdersOfClientAndCheckStatusCodeAndSuccess(String authToken){
-        ValidatableResponse response = orderClient.getUserOrders(authToken);
+    public ValidatableResponse getOrdersOfClientAndCheckStatusCodeAndSuccess(String authToken){
+        return orderClient.getUserOrders(authToken);
+    }
+
+    public void checkOrdersReturned(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_OK));
