@@ -3,6 +3,8 @@ package user;
 import com.github.javafaker.Faker;
 import io.qameta.allure.junit4.DisplayName;
 import model.UserModel;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Locale;
@@ -24,35 +26,38 @@ public class UserUpdateTest {
 
     UserModel newUser = new UserModel(newEmail, null, newName);
 
+    @Before
+    public void setUp(){
+        steps.createNewUser(user);
+    }
+
+    @After
+    public void cleanUp(){
+        steps.deleteUser();
+    }
+
     @Test
     @DisplayName("Обновление пользователя, положительный сценарий")
     public void updateUserInfoTest(){
-        steps.createNewUser(user);
         steps.loginUserPositive(email, password);
         steps.updateUserPositive(newUser, newName, newEmail);
-        steps.deleteUser();
     }
 
     @Test
     @DisplayName("Обнволение пользователя, негативный сценарий без авторизационного токена")
     public void updateUserInfoWithoutAuthorizationNegativeTest(){
-        steps.createNewUser(user);
         steps.loginUserPositive(email, password);
         steps.updateUserUnauthorizedNegative(newUser);
-        steps.deleteUser();
     }
 
     @Test
     @DisplayName("Обновление пользователя, тест с уже использованной почтой")
     public void updateUserInfoWithUsedEmailNegativeTest(){
-        steps.createNewUser(user);
         String existingMail = faker.name().lastName() + "@" + faker.name().lastName() + ".ru";
         steps.createNewUser(new UserModel(existingMail,
                 faker.lorem().characters(10, true),
                 faker.name().firstName()));
         steps.loginUserPositive(email, password);
         steps.updateUserEmailAlreadyExistNegative(newName, existingMail);
-        steps.deleteUser();
-
     }
 }
