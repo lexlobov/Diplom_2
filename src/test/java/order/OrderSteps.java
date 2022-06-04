@@ -77,8 +77,7 @@ public class OrderSteps {
     }
 
     @Step("Создание заказа")
-    @Description("Проверки статус кода, флага success, а также, что номер заказа не null")
-    public void createOrderPositive(String authToken){
+    public ValidatableResponse createOrderPositive(String authToken){
         IngredientsModel ingredientsModel = orderClient.getIngredients();
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
         String randomBun = getRandomBun(ingredientsModel);
@@ -86,8 +85,12 @@ public class OrderSteps {
         List<String> randomBurger = generateBurgerWithRandomIngredients(ingredientHashes);
         randomBurger.add(randomBun);
         ingredientsCreateModel.setIngredients(randomBurger);
+        return orderClient.createOrder(ingredientsCreateModel, authToken);
 
-        ValidatableResponse response = orderClient.createOrder(ingredientsCreateModel, authToken);
+    }
+    @Step("Проверка, что заказ успешно создан")
+    @Description("Проверки статус кода, флага success, а также, что номер заказа не null")
+    public void checkOrderCreated(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         int orderNumber = response.extract().path("order.number");
@@ -99,7 +102,7 @@ public class OrderSteps {
 
     @Step("Создание заказа без авторизации")
     @Description("Проверки статус кода, флага success, а также, что номер заказа не null")
-    public void createOrderWithoutAuthorization(){
+    public ValidatableResponse createOrderWithoutAuthorization(){
         IngredientsModel ingredientsModel = orderClient.getIngredients();
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
         String randomBun = getRandomBun(ingredientsModel);
@@ -107,21 +110,17 @@ public class OrderSteps {
         List<String> randomBurger = generateBurgerWithRandomIngredients(ingredientHashes);
         randomBurger.add(randomBun);
         ingredientsCreateModel.setIngredients(randomBurger);
-
-        ValidatableResponse response = orderClient.createOrderWithoutAuthorization(ingredientsCreateModel);
-        int statusCode = response.extract().statusCode();
-        boolean isSuccess = response.extract().path("success");
-        int orderNumber = response.extract().path("order.number");
-        assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_OK));
-        assertThat("Success should be true", isSuccess, equalTo(true));
-        assertThat("Order number should be not null", orderNumber, notNullValue());
+        return orderClient.createOrderWithoutAuthorization(ingredientsCreateModel);
     }
 
     @Step("Создание заказа без ингредиентов")
     @Description("Проверки статус кода, флага success и сообщения")
-    public void createOrderWithoutIngredients(String authToken){
+    public ValidatableResponse createOrderWithoutIngredients(String authToken){
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
-        ValidatableResponse response = orderClient.createOrder(ingredientsCreateModel, authToken);
+        return orderClient.createOrder(ingredientsCreateModel, authToken);
+    }
+
+    public void checkOrderWithoutIngredientsNotCreated(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         String message = response.extract().path("message");
@@ -132,10 +131,13 @@ public class OrderSteps {
 
     @Step("Создание заказа с невалидными хэшами ингредиентов")
     @Description("Проверка статус кода")
-    public void createOrderWithInvalidIngredientHashes(String authToken){
+    public ValidatableResponse createOrderWithInvalidIngredientHashes(String authToken){
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
         ingredientsCreateModel.setIngredients(generateFakeIngredientHashes());
-        ValidatableResponse response = orderClient.createOrder(ingredientsCreateModel, authToken);
+        return orderClient.createOrder(ingredientsCreateModel, authToken);
+    }
+
+    public void checkOrderWithInvalidIngredientHashesNotCreated(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         assertThat("Status code should be 500", statusCode, equalTo(HttpStatus.SC_INTERNAL_SERVER_ERROR));
     }

@@ -2,6 +2,7 @@ package order;
 
 import com.github.javafaker.Faker;
 import io.qameta.allure.junit4.DisplayName;
+import io.restassured.response.ValidatableResponse;
 import model.UserModel;
 import org.junit.After;
 import org.junit.Before;
@@ -33,24 +34,28 @@ public class OrderCreateTest {
     @Test
     @DisplayName("Создание заказа позитивный сценарий")
     public void createNewOrderPositiveTest(){
-        orderSteps.createOrderPositive(userSteps.getAuthToken());
+        ValidatableResponse response = orderSteps.createOrderPositive(userSteps.getAuthToken());
+        orderSteps.checkOrderCreated(response);
     }
 
     @Test
     @DisplayName("Создание заказа без авторизации")
     public void createNewOrderWithoutAuthorizationPositiveTest(){
-        orderSteps.createOrderWithoutAuthorization();
+        ValidatableResponse response = orderSteps.createOrderWithoutAuthorization();
+        orderSteps.checkOrderCreated(response);
     }
 
     @Test
     @DisplayName("Создание заказа, негативный сценрий без ингредиентов")
     public void createOrderWithoutIngredientsNegativeTest(){
-        orderSteps.createOrderWithoutIngredients(userSteps.getAuthToken());
+        ValidatableResponse response = orderSteps.createOrderWithoutIngredients(userSteps.getAuthToken());
+        orderSteps.checkOrderWithoutIngredientsNotCreated(response);
     }
 
     @Test
     @DisplayName("Создание заказа, негативный сценарий с невалидными ингредиентами")
     public void createOrderWithInvalidIngredientHashesNegativeTest(){
-        orderSteps.createOrderWithInvalidIngredientHashes(userSteps.getAuthToken());
+        ValidatableResponse response = orderSteps.createOrderWithInvalidIngredientHashes(userSteps.getAuthToken());
+        orderSteps.checkOrderWithInvalidIngredientHashesNotCreated(response);
     }
 }
