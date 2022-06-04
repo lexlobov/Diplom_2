@@ -138,12 +138,13 @@ public class UserSteps {
     }
 
     @Step("Негативный сценарий обновления пользователя, когда нет авторизации")
-    @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
     public ValidatableResponse updateUserUnauthorizedNegative(UserModel user){
         return userClient.updateUser(user, "");
 
     }
 
+    @Step("Проверка, что нельзя обновить пользователя без авторизации")
+    @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
     public void checkUnauthorizedUserNotUpdated(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");

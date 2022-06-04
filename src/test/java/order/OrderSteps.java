@@ -115,12 +115,13 @@ public class OrderSteps {
     }
 
     @Step("Создание заказа без ингредиентов")
-    @Description("Проверки статус кода, флага success и сообщения")
     public ValidatableResponse createOrderWithoutIngredients(String authToken){
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
         return orderClient.createOrder(ingredientsCreateModel, authToken);
     }
 
+    @Step("Проверка, что без ингеридентов заказ не создается")
+    @Description("Проверки статус кода, флага success и сообщения")
     public void checkOrderWithoutIngredientsNotCreated(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
@@ -131,24 +132,26 @@ public class OrderSteps {
     }
 
     @Step("Создание заказа с невалидными хэшами ингредиентов")
-    @Description("Проверка статус кода")
     public ValidatableResponse createOrderWithInvalidIngredientHashes(String authToken){
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
         ingredientsCreateModel.setIngredients(generateFakeIngredientHashes());
         return orderClient.createOrder(ingredientsCreateModel, authToken);
     }
 
+    @Step("Проверка, что с неверными хэшами ингридиентов заказ не создается")
+    @Description("Проверка статус кода")
     public void checkOrderWithInvalidIngredientHashesNotCreated(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         assertThat("Status code should be 500", statusCode, equalTo(HttpStatus.SC_INTERNAL_SERVER_ERROR));
     }
 
     @Step("Получение списка заказов пользователя")
-    @Description("Проверки статус кода, флага success")
     public ValidatableResponse getOrdersOfClientAndCheckStatusCodeAndSuccess(String authToken){
         return orderClient.getUserOrders(authToken);
     }
 
+    @Step("Проверка, что список заказов пользователя приходит")
+    @Description("Проверки статус кода, флага success")
     public void checkOrdersReturned(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
@@ -157,7 +160,6 @@ public class OrderSteps {
     }
 
     @Step("Получение списка заказов пользователя")
-    @Description("Проверка того, что номер заказа, который приходит в запросе соответствует номеру, который пришел при создании заказа")
     public OrderModel getOrdersOfClientAndCheckIfCreatedOrderIsInList(String authToken)
     {
         OrdersApiResponseModel orders = orderClient.getUserOrdersAsOrdersClass(authToken);
@@ -165,17 +167,19 @@ public class OrderSteps {
         return orderList.get(orderList.size()-1);
     }
 
+    @Step("Проверка, что номер заказа в ответе соответствует номеру при создани")
     public void checkOrderNumberCorrect(OrderModel order){
         int newOrderNumber = order.getNumber();
         assertThat("Order number should match previously created order", newOrderNumber, equalTo(getOrderNumber()));
     }
 
     @Step("Получение списка заказов пользователя без авторизации")
-    @Description("Проверки статус кода, флага success и сообщения")
     public ValidatableResponse getOrdersOfClientWithoutAuthorization(){
         return orderClient.getUserOrdersWithoutAuthorization();
     }
 
+    @Step("Проверка, что список заказов не приходит без авторизации")
+    @Description("Проверки статус кода, флага success и сообщения")
     public void checkOrdersOfClientDontReturnWithoutAuthorization(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
