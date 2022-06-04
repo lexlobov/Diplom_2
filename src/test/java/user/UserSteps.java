@@ -101,8 +101,14 @@ public class UserSteps {
     }
 
     @Step("Удаление пользователя")
-    public void deleteUser(){
-        ValidatableResponse response = deleteUserClient.deleteUser(authToken);
+    public ValidatableResponse deleteUser(){
+        if (authToken == null) {
+            setAuthToken("420");
+        }
+        return deleteUserClient.deleteUser(authToken);
+    }
+
+    public void checkUserDeleted(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_ACCEPTED));
