@@ -2,6 +2,7 @@ package user;
 
 import com.github.javafaker.Faker;
 import io.qameta.allure.junit4.DisplayName;
+import io.restassured.response.ValidatableResponse;
 import model.UserModel;
 import org.junit.After;
 import org.junit.Before;
@@ -32,7 +33,8 @@ public class UserLoginTest {
     @Test
     @DisplayName("Авторизация пользователя, позитивный сценарий")
     public void userLoginPositiveTest(){
-        steps.loginUserPositive(email, password);
+        ValidatableResponse response = steps.loginUserPositive(email, password);
+        steps.checkAuthorizationSuccessful(response);
     }
 
     @Test

@@ -23,25 +23,37 @@ public class UserSteps {
     private String authToken;
 
     @Step("Создание пользователя")
-    @Description("Проверяются код ответа и флаг success")
-    public void createNewUser(UserModel user){
+    public ValidatableResponse createNewUser(UserModel user){
         ValidatableResponse response = createUserClient.createUser(user);
+        setAuthToken(response.extract().path("accessToken"));
+        return response;
+    }
+
+    @Step("Проверка корректности работы запроса на регистрацию")
+    @Description("Проверяются код ответа и флаг success, а также что присутствуют токены")
+    public void checkRegistrationSuccessful(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
-        String accessToken = response.extract().path("accessToken");
         String refreshToken = response.extract().path("refreshToken");
+        String accessToken = response.extract().path("accessToken");
         assertThat("Status code should be 200", statusCode, equalTo(HttpStatus.SC_OK));
         assertThat("Success should be true", isSuccess, equalTo(true));
         assertThat("Access token should be not null", accessToken, notNullValue());
         assertThat("Refresh token should be not null", refreshToken, notNullValue());
-        setAuthToken(accessToken);
+
     }
 
     @Step("Авторизация пользователя")
-    @Description("Проверяются код ответа, флаг success и наличие токенов")
-    public void loginUserPositive(String email, String password){
+    public ValidatableResponse loginUserPositive(String email, String password){
         UserModel user = new UserModel(email, password);
         ValidatableResponse response = loginUserClient.loginUser(user);
+        setAuthToken(response.extract().path("accessToken"));
+        return response;
+    }
+
+    @Step("Проверка корректности работы запроса на авторизацию")
+    @Description("Проверяются код ответа, флаг success и наличие токенов")
+    public void checkAuthorizationSuccessful(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         String accessToken = response.extract().path("accessToken");
@@ -50,13 +62,11 @@ public class UserSteps {
         assertThat("Success should be true", isSuccess, equalTo(true));
         assertThat("Access token should be not null", accessToken, notNullValue());
         assertThat("Refresh token should be not null", refreshToken, notNullValue());
-        setAuthToken(accessToken);
     }
 
     @Step("Негативный сценарий создания пользователя при вводе почты, которая уже зарегистрирована")
     @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
-    public void createNewUserAlreadyExistNegative(UserModel user){
-        ValidatableResponse response = createUserClient.createUser(user);
+    public void checkNewUserAlreadyExistNegative(ValidatableResponse response){
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         String message = response.extract().path("message");

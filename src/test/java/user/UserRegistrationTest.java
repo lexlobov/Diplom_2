@@ -2,6 +2,7 @@ package user;
 
 import com.github.javafaker.Faker;
 import io.qameta.allure.junit4.DisplayName;
+import io.restassured.response.ValidatableResponse;
 import model.UserModel;
 import org.junit.After;
 import org.junit.Before;
@@ -27,13 +28,16 @@ public class UserRegistrationTest {
     @Test
     @DisplayName("Создание пользователя, поизитвный сценарий")
     public void registerNewUserPositiveTest(){
-        steps.createNewUser(user);
+        ValidatableResponse response = steps.createNewUser(user);
+        steps.checkRegistrationSuccessful(response);
     }
 
     @Test
     @DisplayName("Создание пользователя с уже существующей почтой")
     public void registerNewUserEmailAlreadyExistNegativeTest(){
         steps.createNewUser(user);
-        steps.createNewUserAlreadyExistNegative(user);
+        ValidatableResponse response = steps.createNewUser(user);
+        steps.checkNewUserAlreadyExistNegative(response);
+        steps.loginUserPositive(email, password);
     }
 }
