@@ -20,11 +20,11 @@ public class GetOrdersByUserTest {
     String userName = faker.name().firstName();
     String email = userName + "@" + faker.name().lastName() + ".ru";
     String password = faker.lorem().characters(10, true);
-    UserModel uer = new UserModel(email, password, userName);
+    UserModel user = new UserModel(email, password, userName);
 
     @Before
     public void setUp(){
-        userSteps.createNewUser(uer);
+        userSteps.createNewUser(user);
     }
 
     @After
