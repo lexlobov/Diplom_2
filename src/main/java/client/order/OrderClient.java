@@ -7,7 +7,7 @@ import model.IngredientsCreateModel;
 import static io.restassured.RestAssured.given;
 
 
-public class CreateOrderClient extends BaseHttpConfig {
+public class OrderClient extends BaseHttpConfig {
 
     private final String createOrderUri = "/api/orders";
 

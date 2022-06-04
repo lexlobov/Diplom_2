@@ -1,6 +1,6 @@
 package order;
 
-import client.order.CreateOrderClient;
+import client.order.OrderClient;
 import client.order.GetIngredientsClient;
 import client.order.GetUserOrdersClient;
 import com.github.javafaker.Faker;
@@ -32,7 +32,7 @@ public class OrderSteps {
 
 
 
-    CreateOrderClient createOrderClient = new CreateOrderClient();
+    OrderClient orderClient = new OrderClient();
     GetIngredientsClient getIngredientsClient = new GetIngredientsClient();
     GetUserOrdersClient getUserOrdersClient = new GetUserOrdersClient();
     Random random = new Random();
@@ -91,7 +91,7 @@ public class OrderSteps {
         randomBurger.add(randomBun);
         ingredientsCreateModel.setIngredients(randomBurger);
 
-        ValidatableResponse response = createOrderClient.createOrder(ingredientsCreateModel, authToken);
+        ValidatableResponse response = orderClient.createOrder(ingredientsCreateModel, authToken);
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         int orderNumber = response.extract().path("order.number");
@@ -112,7 +112,7 @@ public class OrderSteps {
         randomBurger.add(randomBun);
         ingredientsCreateModel.setIngredients(randomBurger);
 
-        ValidatableResponse response = createOrderClient.createOrderWithoutAuthorization(ingredientsCreateModel);
+        ValidatableResponse response = orderClient.createOrderWithoutAuthorization(ingredientsCreateModel);
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         int orderNumber = response.extract().path("order.number");
@@ -125,7 +125,7 @@ public class OrderSteps {
     @Description("Проверки статус кода, флага success и сообщения")
     public void createOrderWithoutIngredients(String authToken){
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
-        ValidatableResponse response = createOrderClient.createOrder(ingredientsCreateModel, authToken);
+        ValidatableResponse response = orderClient.createOrder(ingredientsCreateModel, authToken);
         int statusCode = response.extract().statusCode();
         boolean isSuccess = response.extract().path("success");
         String message = response.extract().path("message");
@@ -139,7 +139,7 @@ public class OrderSteps {
     public void createOrderWithInvalidIngredientHashes(String authToken){
         IngredientsCreateModel ingredientsCreateModel = new IngredientsCreateModel();
         ingredientsCreateModel.setIngredients(generateFakeIngredientHashes());
-        ValidatableResponse response = createOrderClient.createOrder(ingredientsCreateModel, authToken);
+        ValidatableResponse response = orderClient.createOrder(ingredientsCreateModel, authToken);
         int statusCode = response.extract().statusCode();
         assertThat("Status code should be 500", statusCode, equalTo(HttpStatus.SC_INTERNAL_SERVER_ERROR));
     }

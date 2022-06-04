@@ -1,9 +1,6 @@
 package user;
 
-import client.user.CreateUserClient;
-import client.user.DeleteUserClient;
-import client.user.LoginUserClient;
-import client.user.UpdateUserClient;
+import client.user.UserClient;
 import io.qameta.allure.Description;
 import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
@@ -15,16 +12,13 @@ import static org.hamcrest.Matchers.*;
 
 public class UserSteps {
 
-    CreateUserClient createUserClient = new CreateUserClient();
-    LoginUserClient loginUserClient = new LoginUserClient();
-    UpdateUserClient updateUserClient = new UpdateUserClient();
-    DeleteUserClient deleteUserClient = new DeleteUserClient();
+    UserClient userClient = new UserClient();
 
     private String authToken;
 
     @Step("Создание пользователя")
     public ValidatableResponse createNewUser(UserModel user){
-        ValidatableResponse response = createUserClient.createUser(user);
+        ValidatableResponse response = userClient.createUser(user);
         setAuthToken(response.extract().path("accessToken"));
         return response;
     }
@@ -46,7 +40,7 @@ public class UserSteps {
     @Step("Авторизация пользователя")
     public ValidatableResponse loginUserPositive(String email, String password){
         UserModel user = new UserModel(email, password);
-        ValidatableResponse response = loginUserClient.loginUser(user);
+        ValidatableResponse response = userClient.loginUser(user);
         setAuthToken(response.extract().path("accessToken"));
         return response;
     }
@@ -102,7 +96,7 @@ public class UserSteps {
         if (authToken == null) {
             setAuthToken("420");
         }
-        return deleteUserClient.deleteUser(authToken);
+        return userClient.deleteUser(authToken);
     }
 
     @Step("Проверка, что пользователь удален")
@@ -117,7 +111,7 @@ public class UserSteps {
     @Description("Проверяются код ответа, флаг success и обновленное имя и почта в ответе")
     public ValidatableResponse updateUserPositive(String newName, String newEmail){
         UserModel user = new UserModel(newEmail, null, newName);
-        return updateUserClient.updateUser(user, authToken);
+        return userClient.updateUser(user, authToken);
     }
 
     @Step("Проверка, что пользователь обновлен успешно")
@@ -146,7 +140,7 @@ public class UserSteps {
     @Step("Негативный сценарий обновления пользователя, когда нет авторизации")
     @Description("Проверяются код ответа, флаг success и содержания сообщения от сервера")
     public ValidatableResponse updateUserUnauthorizedNegative(UserModel user){
-        return updateUserClient.updateUser(user, "");
+        return userClient.updateUser(user, "");
 
     }
 
