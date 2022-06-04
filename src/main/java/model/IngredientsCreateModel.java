@@ -6,9 +6,6 @@ public class IngredientsCreateModel {
 
     private List<String > ingredients;
 
-    public IngredientsCreateModel() {
-    }
-
     public List<String > getIngredients() {
         return ingredients;
     }
