@@ -42,5 +42,7 @@ public class UserRegistrationParameterizedNegativeTest {
     public void createNewUserNotEnoughData(){
         UserModel user = new UserModel(email, name, password);
         steps.createNewUserNotEnoughDataNegative(user);
+        steps.loginUserPositive(email, password);
+        steps.deleteUser();
     }
 }
